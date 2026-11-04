@@ -143,6 +143,16 @@ Initial source analysis is documented in [PLATFORM_REQUIREMENTS.md](../research/
 
 **Exit:** every critical platform requirement has evidence or an explicit blocker. Stage B remains open until board revision, runtime memory handoff, and XNU interrupt/timer/CPU integration questions are resolved.
 
+### Stage B.2 — XNU hardware compatibility
+
+The source-level comparison is documented in [XNU_HARDWARE_COMPATIBILITY.md](../research/XNU_HARDWARE_COMPATIBILITY.md).
+
+- XNU has GICv3-related FIQ setup, but its inspected path expects `/arm-io/gic`; Hanoip's Linux DTS uses a different GIC node layout and includes Qualcomm PDC.
+- XNU's timebase parser reads a running CPU node's `timebase-frequency` and has a 24 MHz fallback in the inspected function. Hanoip's DTS timer node instead declares `clock-frequency = 19200000`; the CPU-node properties expected by XNU are absent from the inspected base DTS.
+- XNU's generic ARM64 CPU-start path delegates to `PE_cpu_start()`; the inspected generic code does not establish a Hanoip-compatible PSCI implementation.
+
+**Assessment:** hardware architecture overlap exists, but the GIC path, PDC, timer/timebase, and PSCI startup are not demonstrated as drop-in compatible. Stage B.2 is documented; validation and platform design remain open.
+
 ### Stage C — Hardware feasibility matrix
 
 - Trace each hardware subsystem to a source-level driver or reliable hardware reference.
