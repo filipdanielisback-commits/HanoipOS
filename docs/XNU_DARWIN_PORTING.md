@@ -230,3 +230,8 @@ References are starting points. Verify the revision, platform applicability, and
 ### Stage B.3 — boot and memory handoff
 
 See [BOOT_ENVIRONMENT_AND_MEMORY_HANDOFF.md](../research/BOOT_ENVIRONMENT_AND_MEMORY_HANDOFF.md) for the source-level comparison. Key blocker: XNU's inspected ARM initialization requires `/chosen/dram-base` and `/chosen/dram-size`, while those properties are absent from the inspected Hanoip DTS source. The actual firmware-provided runtime tree and XNU `boot_args` equivalent remain unknown. Hanoip's reserved-memory map also needs a complete, board-revision-correct inventory before any platform memory design can be considered.
+
+
+### Stage B.3 — boot and memory handoff
+
+See [BOOT_ENVIRONMENT_AND_MEMORY_HANDOFF.md](../research/BOOT_ENVIRONMENT_AND_MEMORY_HANDOFF.md). XNU's inspected ARM initialization requires `/chosen/dram-base` and `/chosen/dram-size`, absent from the inspected Hanoip DTS source. The runtime firmware tree and XNU `boot_args` equivalent remain unknown. Hanoip's reserved-memory map and exact board overlay also need validation.
