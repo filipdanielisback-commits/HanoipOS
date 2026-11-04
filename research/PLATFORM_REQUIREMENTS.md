@@ -174,3 +174,15 @@ AOSP documentation allows Android 12 devices to use header v3 or v4. The stock i
 **XNU implication:** Android boot-image containers and Android command-line metadata do not themselves provide Apple's ARM64 boot_args structure. The required XNU memory/device-tree handoff remains unproven.
 
 **Status:** Stage B.4 research documented; stock Motorola boot-chain and XNU handoff compatibility remain unknown.
+
+## 10. Stage B.5 — ARM64 entry and XNU startup assumptions
+
+See [ARM64_ENTRY_AND_XNU_STARTUP.md](ARM64_ENTRY_AND_XNU_STARTUP.md).
+
+The generic Linux ARM64 boot documentation specifies a primary-CPU x0 value containing the physical DTB address, with x1-x3 reserved/zero, and documents the CPU exception level, interrupt, MMU, timer, and coherency state expected by Linux. These requirements are Linux-specific and are not a universal AArch64 operating-system entry ABI.
+
+The inspected XNU xnu-8796.121.2 assembly documents x0 to start_first_cpu as the Apple boot_args pointer. The boot_args structure separately contains virtBase, physBase, memSize, topOfKernelData, deviceTreeP, and deviceTreeLength. XNU VM initialization consumes the memory-layout values, and arm_init requires /chosen/dram-base and /chosen/dram-size.
+
+The exact Motorola Hanoip DTS declares PSCI CPU enable-methods and a PSCI node using the SMC conduit. The inspected XNU cpu_start path delegates secondary CPU startup to PE_cpu_start. A Hanoip-specific implementation of that hook or verified access to the platform PSCI service from XNU has not been established.
+
+**Status:** The Linux and XNU entry interfaces differ at the source level. Motorola's actual runtime register/exception state, XNU boot_args availability, DRAM properties, and XNU PSCI integration remain unknown. Stage B.5 is documented; no boot compatibility is claimed.
