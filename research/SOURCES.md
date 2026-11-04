@@ -62,3 +62,16 @@ Do not assume a device with the same SoC is interchangeable with the Moto G60. B
 - **XNU comparison:** Candidate `xnu-8796.121.2` ARM initialization calls platform initialization, parses CPU topology, initializes the CPU timebase, and requires `dram-base` and `dram-size` properties under `/chosen`. This makes boot-argument and memory handoff a significant unresolved compatibility gap.
 - **What it does not establish:** It does not prove XNU supports this GIC/PDC, PSCI, timer, board revision, or boot protocol. It does not establish the complete runtime DRAM map or the exact board overlay used by the owner's phone.
 - **Follow-up:** Identify the exact installed Hanoip board overlay from reliable model/build-specific evidence, then inspect the XNU platform/interrupt/timer code paths and document which interfaces would require new platform code.
+
+
+### Stage B.2 — XNU hardware compatibility analysis
+
+- **Date:** 2026-11-04
+- **XNU revision:** `xnu-8796.121.2`.
+- **Files examined:** `pexpert/arm/pe_fiq.c`, `pexpert/arm/pe_identify_machine.c`, `osfmk/arm64/cpu.c`, `osfmk/arm/arm_init.c`, and `pexpert/pexpert/arm64/VMAPPLE.h`.
+- **GIC finding:** XNU's GICv3 FIQ path looks for `/arm-io/gic`, maps distributor/redistributor regions, and enables PPI 27. Hanoip's Linux DTS exposes a GICv3 node named `interrupt-controller@17a00000` and a separate Qualcomm PDC. This is architectural overlap, not drop-in compatibility.
+- **Timer finding:** XNU's inspected timebase parser reads `timebase-frequency` from a CPU node marked `state = "running"` and defaults to 24 MHz in that routine. Hanoip's inspected CPU nodes lack those properties, while the timer node has `clock-frequency = 19200000`. Runtime firmware may modify the tree; that has not been verified.
+- **CPU startup finding:** XNU's generic ARM64 `cpu_start()` calls platform hook `PE_cpu_start()`; the inspected generic path does not itself demonstrate a PSCI CPU_ON implementation. Hanoip's Linux DTS specifies `enable-method = "psci"`.
+- **PDC finding:** Hanoip's DTS has `qcom,pdc-sdmmagpie`; no corresponding Hanoip-specific PDC path was identified in the inspected XNU sources.
+- **Conclusion:** GICv3, timer, PDC, and PSCI integration require platform-specific validation/adaptation. No hardware compatibility or boot success is claimed.
+- **Report:** `research/XNU_HARDWARE_COMPATIBILITY.md`.
