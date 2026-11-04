@@ -113,3 +113,17 @@ Do not assume a device with the same SoC is interchangeable with the Moto G60. B
 - **Assessment:** Linux ARM64 x0=DTB convention and XNU x0=boot_args contract are different interfaces. Actual Motorola runtime entry state and any compatible handoff are unknown.
 - **Report:** ARM64_ENTRY_AND_XNU_STARTUP.md.
 - **References:** https://www.kernel.org/doc/html/v6.16/arch/arm64/booting.html ; https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.121.2/osfmk/arm64/start.s ; https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.121.2/pexpert/pexpert/arm64/boot.h ; https://github.com/MotorolaMobilityLLC/kernel-msm/blob/MMI-S2RIS32.32-20-9-9-2-3/arch/arm64/boot/dts/qcom/sdmmagpie.dtsi
+
+### Stage B.6 — XNU platform dependencies
+
+- **Date:** 2026-11-04
+- **XNU revision:** xnu-8796.121.2.
+- **Motorola source:** MMI-S2RIS32.32-20-9-9-2-3, peeled commit f6673a1302e3b9ca84c54e956ad4075d676fdf59.
+- **XNU files examined:** pexpert/arm/pe_fiq.c, pexpert/arm/pe_identify_machine.c, pexpert/arm/pe_init.c, pexpert/pexpert/device_tree.h, pexpert/gen/device_tree.c, osfmk/arm64/cpu.c, osfmk/arm64/machine_routines.c, osfmk/arm/rtclock.c.
+- **Motorola files examined:** sdmmagpie.dtsi, sdmmagpie-hanoi-base.dts, and Hanoip overlays.
+- **Device-tree finding:** XNU uses generic SecureDT parsing but platform code looks for Apple-specific paths such as /arm-io/gic and an arm-io node/ranges description. Hanoip DTS describes GICv3 as interrupt-controller@17a00000 and Qualcomm PDC separately.
+- **CPU finding:** Hanoip DTS declares PSCI 1.0 via SMC; XNU cpu_start delegates to PE_cpu_start. No Hanoip-specific implementation was established.
+- **Timer finding:** Hanoip's architected timer node uses four PPIs and clock-frequency=19.2 MHz. XNU pe_identify_machine reads timebase-frequency from a CPU node marked state=running, with a 24 MHz default. Those properties are not present on the inspected static Hanoip CPU nodes.
+- **Interrupt finding:** XNU's GICv3 FIQ code is conditional on HAS_GIC_V3 and looks up /arm-io/gic. It configures PPI 27; no mapping to Hanoip's timer PPI declarations or PDC support was established.
+- **Report:** XNU_PLATFORM_DEPENDENCIES.md.
+- **References:** https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.121.2/pexpert/arm/pe_fiq.c ; https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.121.2/pexpert/arm/pe_identify_machine.c ; https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.121.2/osfmk/arm64/cpu.c ; https://github.com/MotorolaMobilityLLC/kernel-msm/blob/MMI-S2RIS32.32-20-9-9-2-3/arch/arm64/boot/dts/qcom/sdmmagpie.dtsi
