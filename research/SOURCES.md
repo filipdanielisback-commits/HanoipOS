@@ -75,3 +75,14 @@ Do not assume a device with the same SoC is interchangeable with the Moto G60. B
 - **PDC finding:** Hanoip's DTS has `qcom,pdc-sdmmagpie`; no corresponding Hanoip-specific PDC path was identified in the inspected XNU sources.
 - **Conclusion:** GICv3, timer, PDC, and PSCI integration require platform-specific validation/adaptation. No hardware compatibility or boot success is claimed.
 - **Report:** `research/XNU_HARDWARE_COMPATIBILITY.md`.
+
+
+### Stage B.3 — boot environment and memory handoff
+
+- **Date:** 2026-11-04
+- **Motorola evidence:** exact Android 12 kernel tag `MMI-S2RIS32.32-20-9-9-2-3`; inspected `sdmmagpie.dtsi`, Hanoip base DTS, and Hanoip DVT2 overlay.
+- **Hanoip DTS:** `/chosen/bootargs` is present; common DTS contains multiple fixed `no-map` reserved-memory regions. Hanoip base adds a reusable secure-display shared DMA pool of `0x08c00000` bytes (140 MiB).
+- **Board metadata:** DVT2 overlay labels model `hanoip`, MSM ID `365 0x0`, board ID `0x4C 0xB200`; this does not prove that overlay matches this particular handset.
+- **XNU boot contract:** ARM64 `boot_args` includes `virtBase`, `physBase`, `memSize`, `topOfKernelData`, device-tree pointer/length, and command line. `osfmk/arm/arm_init.c` explicitly requires `/chosen/dram-base` and `/chosen/dram-size`, panicking if absent.
+- **Assessment:** those XNU-specific DRAM properties are absent from the inspected Hanoip source DTS. Firmware may add runtime properties; the actual runtime tree and boot-argument handoff are unknown.
+- **Report:** `research/BOOT_ENVIRONMENT_AND_MEMORY_HANDOFF.md`.
