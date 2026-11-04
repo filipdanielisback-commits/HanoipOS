@@ -119,12 +119,17 @@ Treat graphics as a later, independent workstream. A working kernel does not imp
 
 ### Stage A — Establish source baseline
 
-- Select a specific public XNU source revision.
-- Record its architecture and platform assumptions from source and documentation.
+- Identify Apple's maintained public XNU source repository.
+- Confirm the upstream architecture claims from its README.
+- Document a candidate source revision and explain why it is useful as a comparison baseline.
+- Verify the exact upstream tag and immutable commit directly before pinning it for any source checkout.
+- Inspect the candidate tag's actual license and notices.
 - Create a source and license manifest.
 - Locate exact Moto G60 kernel and device-tree sources for the reported build, if publicly available.
 
-**Exit:** versioned references and a written compatibility gap analysis.
+**Current result:** A candidate baseline, `xnu-8796.121.2`, is documented in [XNU_SOURCE_BASELINE.md](../research/XNU_SOURCE_BASELINE.md). Apple's README documents ARM64 support, and HakiOS identifies this tag as its own base. The tag has not yet been pinned to an immutable Apple commit in this project, and exact Moto G60 source revisions remain to be verified.
+
+**Exit:** immutable, versioned references and a written compatibility gap analysis.
 
 ### Stage B — Platform requirements matrix
 
@@ -171,8 +176,12 @@ A source repository existing is not proof that its code builds for this phone. A
 |---|---|
 | Exact device model recorded | Confirmed by device owner: XT2135-2 |
 | Android version / build recorded | Confirmed by device owner: Android 12, S2RIS32.32-20-9-9-2-3 |
-| XNU source identified | Public Apple XNU repository identified; release selection pending |
-| XNU ARM64 platform compatibility | Unknown |
+| Apple XNU repository identified | Confirmed: apple-oss-distributions/xnu |
+| XNU architecture baseline | Upstream README documents ARM64 and x86_64 |
+| Candidate source revision | `xnu-8796.121.2`, documented; immutable commit verification pending |
+| Candidate source license audit | Pending direct inspection of source notices |
+| Moto G60 kernel/device-tree source revisions | Not yet verified for the exact build |
+| XNU ARM64 platform compatibility with hanoip | Unknown |
 | Moto G60 boot handoff compatibility | Unknown |
 | Moto G60 XNU hardware drivers | Not established |
 | Darwin user-space composition | Not established |
@@ -182,7 +191,8 @@ A source repository existing is not proof that its code builds for this phone. A
 ## 8. Initial references
 
 - Apple open-source XNU: https://github.com/apple-oss-distributions/xnu
-- Apple Open Source releases: https://opensource.apple.com/releases
+- Apple XNU README: https://github.com/apple-oss-distributions/xnu/blob/main/README.md
+- Candidate baseline research: [XNU_SOURCE_BASELINE.md](../research/XNU_SOURCE_BASELINE.md)
 - HanoipOS hardware inventory: [HARDWARE.md](HARDWARE.md)
 - HanoipOS compatibility tracker: [COMPATIBILITY.md](COMPATIBILITY.md)
 - HanoipOS roadmap: [ROADMAP.md](ROADMAP.md)
