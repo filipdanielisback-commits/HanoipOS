@@ -133,11 +133,15 @@ Treat graphics as a later, independent workstream. A working kernel does not imp
 
 ### Stage B — Platform requirements matrix
 
-- Map ARM64 requirements against the available Moto G60 documentation.
-- Identify missing information for boot handoff, memory, interrupts, timers, and CPU topology.
-- Classify each item as confirmed, likely, unknown, or incompatible.
+Initial source analysis is documented in [PLATFORM_REQUIREMENTS.md](../research/PLATFORM_REQUIREMENTS.md).
 
-**Exit:** every critical platform requirement has evidence or an explicit blocker.
+- Motorola's exact kernel source describes eight ARM64 CPU entries, PSCI CPU enablement, two CPU power-management groups, GICv3 plus Qualcomm PDC, and an ARMv8 architectural timer.
+- The source contains reserved-memory declarations, but the complete runtime DRAM map is not established.
+- The selected XNU candidate's ARM initialization parses CPU topology, initializes platform/timebase state, and requires `dram-base` and `dram-size` under `/chosen`.
+- Hanoip has EVT1, DVT1, and DVT2 device-tree overlays; the exact overlay used by the owner's device remains unknown.
+- Android DTB/boot-image metadata is not an Apple XNU boot protocol. Compatibility is not established.
+
+**Exit:** every critical platform requirement has evidence or an explicit blocker. Stage B remains open until board revision, runtime memory handoff, and XNU interrupt/timer/CPU integration questions are resolved.
 
 ### Stage C — Hardware feasibility matrix
 
