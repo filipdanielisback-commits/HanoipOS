@@ -86,3 +86,16 @@ Do not assume a device with the same SoC is interchangeable with the Moto G60. B
 - **XNU boot contract:** ARM64 `boot_args` includes `virtBase`, `physBase`, `memSize`, `topOfKernelData`, device-tree pointer/length, and command line. `osfmk/arm/arm_init.c` explicitly requires `/chosen/dram-base` and `/chosen/dram-size`, panicking if absent.
 - **Assessment:** those XNU-specific DRAM properties are absent from the inspected Hanoip source DTS. Firmware may add runtime properties; the actual runtime tree and boot-argument handoff are unknown.
 - **Report:** `research/BOOT_ENVIRONMENT_AND_MEMORY_HANDOFF.md`.
+
+### Stage B.4 — Motorola boot chain and Android boot-image format
+
+- **Date:** 2026-11-04
+- **Motorola source:** exact tag MMI-S2RIS32.32-20-9-9-2-3, peeled commit f6673a1302e3b9ca84c54e956ad4075d676fdf59.
+- **Files examined:** Motorola ARM64 architecture Makefile, ARM64 boot Makefile, Qualcomm DTS Makefile, and Hanoip-specific kernel config extension.
+- **Kernel build findings:** source supports ARM64 Image/compressed outputs and Image-dtb / Image.gz-dtb targets; CONFIG_HANOIP_DTB selects Hanoip EVT1, DVT1, and DVT2 overlays.
+- **Community build evidence:** motorola-sm6150-devs/device_motorola_hanoip BoardConfig.mk on lineage-20 sets boot header version 3, enables DTB inclusion in image build configuration, uses a separated DTBO setting, enables AVB in that community build, and declares boot/vendor_boot/DTBO partition sizes. This is not proof of the stock Motorola firmware layout or signing configuration.
+- **AOSP format finding:** Android 12 permits boot-image header v3 or v4; Android version alone does not establish the stock image header version. DTB placement depends on the image format and build target.
+- **Unknown:** XT2135-2 stock boot header and vendor-boot versions, exact partition layout/slots, proprietary boot-stage sequence, AVB chain/policy, runtime DTB selection, and kernel entry contract.
+- **XNU comparison:** Android boot-image metadata does not provide Apple's ARM64 boot_args structure or prove the XNU-required runtime memory properties. Android-to-XNU handoff remains unestablished.
+- **Report:** MOTOROLA_BOOT_CHAIN_AND_IMAGE_FORMAT.md.
+- **References:** https://github.com/MotorolaMobilityLLC/kernel-msm/issues/574 ; https://github.com/motorola-sm6150-devs/device_motorola_hanoip/blob/lineage-20/BoardConfig.mk ; https://source.android.com/docs/core/architecture/bootloader/boot-image-header ; https://source.android.com/docs/core/architecture/bootloader/dtb-images
