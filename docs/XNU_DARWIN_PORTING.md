@@ -246,3 +246,14 @@ See [MOTOROLA_BOOT_CHAIN_AND_IMAGE_FORMAT.md](../research/MOTOROLA_BOOT_CHAIN_AN
 - Android boot-image metadata does not supply or prove Apple's ARM64 boot_args contract. The XNU handoff gap identified in Stage B.3 remains open.
 
 **Exit:** Stage B.4 source research is documented; stock boot-chain and runtime handoff evidence remain incomplete. No device-side changes or boot attempts have been made.
+
+### Stage B.5 — ARM64 entry and XNU startup assumptions
+
+See [ARM64_ENTRY_AND_XNU_STARTUP.md](../research/ARM64_ENTRY_AND_XNU_STARTUP.md).
+
+- The documented Linux ARM64 entry convention passes the physical DTB address in x0. The inspected XNU start_first_cpu path documents x0 as a pointer to Apple's boot_args structure.
+- XNU boot_args carries kernel virtual/physical bases, managed memory size, topOfKernelData, and a separate DTB pointer/length. XNU's inspected ARM initialization additionally requires /chosen/dram-base and /chosen/dram-size.
+- Hanoip's Linux DTS declares PSCI CPU enable-methods and a PSCI node using SMC. XNU's generic cpu_start delegates to PE_cpu_start; Hanoip-specific PSCI support has not been demonstrated.
+- The generic Linux boot protocol is not a universal ARM64 OS ABI and does not prove Motorola's actual runtime register state.
+
+**Exit:** Stage B.5 source comparison is documented. The stock firmware-to-XNU entry contract, runtime memory handoff, and Hanoip CPU-start integration remain unknown. No device changes or boot attempts have been made.
