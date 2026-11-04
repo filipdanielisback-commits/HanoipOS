@@ -99,3 +99,17 @@ Do not assume a device with the same SoC is interchangeable with the Moto G60. B
 - **XNU comparison:** Android boot-image metadata does not provide Apple's ARM64 boot_args structure or prove the XNU-required runtime memory properties. Android-to-XNU handoff remains unestablished.
 - **Report:** MOTOROLA_BOOT_CHAIN_AND_IMAGE_FORMAT.md.
 - **References:** https://github.com/MotorolaMobilityLLC/kernel-msm/issues/574 ; https://github.com/motorola-sm6150-devs/device_motorola_hanoip/blob/lineage-20/BoardConfig.mk ; https://source.android.com/docs/core/architecture/bootloader/boot-image-header ; https://source.android.com/docs/core/architecture/bootloader/dtb-images
+
+### Stage B.5 — ARM64 entry requirements and XNU startup assumptions
+
+- **Date:** 2026-11-04
+- **XNU revision:** xnu-8796.121.2.
+- **XNU files examined:** pexpert/pexpert/arm64/boot.h, osfmk/arm64/start.s, osfmk/arm/arm_init.c, osfmk/arm64/arm_vm_init.c, osfmk/arm64/cpu.c, and pexpert/arm/pe_init.c.
+- **Linux protocol reference:** Linux ARM64 boot documentation, including the primary CPU x0 DTB pointer convention and documented CPU execution-state requirements.
+- **XNU entry finding:** XNU start_first_cpu documents x0 as the Apple boot_args pointer. boot_args separately carries virtBase, physBase, memSize, topOfKernelData, deviceTreeP, and deviceTreeLength.
+- **Memory finding:** XNU VM initialization consumes the boot_args memory-layout values. XNU arm_init also requires /chosen/dram-base and /chosen/dram-size.
+- **Hanoip CPU finding:** Motorola's exact DTS declares enable-method=psci for CPU nodes and a PSCI node with method=smc.
+- **CPU-start finding:** inspected XNU cpu_start delegates to PE_cpu_start; no Hanoip-specific PSCI implementation was established.
+- **Assessment:** Linux ARM64 x0=DTB convention and XNU x0=boot_args contract are different interfaces. Actual Motorola runtime entry state and any compatible handoff are unknown.
+- **Report:** ARM64_ENTRY_AND_XNU_STARTUP.md.
+- **References:** https://www.kernel.org/doc/html/v6.16/arch/arm64/booting.html ; https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.121.2/osfmk/arm64/start.s ; https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.121.2/pexpert/pexpert/arm64/boot.h ; https://github.com/MotorolaMobilityLLC/kernel-msm/blob/MMI-S2RIS32.32-20-9-9-2-3/arch/arm64/boot/dts/qcom/sdmmagpie.dtsi
