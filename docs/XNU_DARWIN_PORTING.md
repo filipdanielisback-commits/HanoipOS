@@ -257,3 +257,14 @@ See [ARM64_ENTRY_AND_XNU_STARTUP.md](../research/ARM64_ENTRY_AND_XNU_STARTUP.md)
 - The generic Linux boot protocol is not a universal ARM64 OS ABI and does not prove Motorola's actual runtime register state.
 
 **Exit:** Stage B.5 source comparison is documented. The stock firmware-to-XNU entry contract, runtime memory handoff, and Hanoip CPU-start integration remain unknown. No device changes or boot attempts have been made.
+
+### Stage B.6 — XNU platform dependencies
+
+See [XNU_PLATFORM_DEPENDENCIES.md](../research/XNU_PLATFORM_DEPENDENCIES.md).
+
+- XNU's generic SecureDT parser is separate from platform-specific device-tree assumptions. The inspected XNU code looks for `/arm-io/gic` and an `arm-io` SoC-base description; Hanoip's Linux DTS names its GIC `interrupt-controller@17a00000` and describes a Qualcomm PDC.
+- Hanoip's Linux DTS declares PSCI 1.0 via SMC. XNU's generic `cpu_start()` delegates secondary CPU startup to `PE_cpu_start()`; Hanoip-specific support remains unestablished.
+- Hanoip's architected timer has four PPI entries and a 19.2 MHz `clock-frequency`. The inspected XNU machine-identification code reads `timebase-frequency` from the CPU node marked `state = "running"`, defaulting to 24 MHz. The static Hanoip CPU nodes inspected do not show those fields.
+- XNU's GICv3 FIQ path is conditional on `HAS_GIC_V3`, expects `/arm-io/gic`, and enables PPI 27. No matching Hanoip device-tree path, timer PPI mapping, or Qualcomm PDC integration was established.
+
+**Exit:** Stage B.6 source research is documented. The device-tree schema, PSCI platform hook, timer configuration, GICv3 discovery, and PDC integration remain platform-porting gaps or unknowns. No device changes or boot attempts have been made.
