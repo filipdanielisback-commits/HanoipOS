@@ -160,3 +160,17 @@ See [BOOT_ENVIRONMENT_AND_MEMORY_HANDOFF.md](BOOT_ENVIRONMENT_AND_MEMORY_HANDOFF
 ## Stage B.3 — boot environment and memory handoff
 
 See [BOOT_ENVIRONMENT_AND_MEMORY_HANDOFF.md](BOOT_ENVIRONMENT_AND_MEMORY_HANDOFF.md). Hanoip's published DTS has Linux `/chosen/bootargs` and extensive reserved-memory declarations, but no inspected source DTS entry for XNU's required `/chosen/dram-base` and `/chosen/dram-size`. XNU's ARM64 `boot_args` also carries kernel virtual/physical bases, managed memory size, and a flattened device-tree pointer/length. The runtime firmware handoff and exact board overlay are not yet known.
+
+## 9. Stage B.4 — boot chain and Android image format
+
+See [MOTOROLA_BOOT_CHAIN_AND_IMAGE_FORMAT.md](MOTOROLA_BOOT_CHAIN_AND_IMAGE_FORMAT.md).
+
+The exact Motorola kernel tag provides ARM64 kernel image build rules and Hanoip-specific DTBO target definitions. The Hanoip kernel configuration enables CONFIG_HANOIP_DTB; the DTS Makefile maps it to EVT1, DVT1, and DVT2 overlays. This confirms source-tree build behavior, not which overlay is selected by the stock firmware on the target handset.
+
+The community Hanoip lineage-20 BoardConfig selects boot header v3, enables DTB inclusion in its image-build configuration, declares a separate DTBO setting, and provides boot/vendor_boot/DTBO image-size settings. It also enables AVB for that community build. These values must not be represented as verified stock XT2135-2 firmware properties.
+
+AOSP documentation allows Android 12 devices to use header v3 or v4. The stock image header version and vendor_boot layout therefore remain unknown. The exact proprietary boot-stage sequence, partition/slot layout, stock AVB policy, runtime DTB selection, and kernel entry contract are also unknown.
+
+**XNU implication:** Android boot-image containers and Android command-line metadata do not themselves provide Apple's ARM64 boot_args structure. The required XNU memory/device-tree handoff remains unproven.
+
+**Status:** Stage B.4 research documented; stock Motorola boot-chain and XNU handoff compatibility remain unknown.
