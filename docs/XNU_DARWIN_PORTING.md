@@ -235,3 +235,14 @@ See [BOOT_ENVIRONMENT_AND_MEMORY_HANDOFF.md](../research/BOOT_ENVIRONMENT_AND_ME
 ### Stage B.3 — boot and memory handoff
 
 See [BOOT_ENVIRONMENT_AND_MEMORY_HANDOFF.md](../research/BOOT_ENVIRONMENT_AND_MEMORY_HANDOFF.md). XNU's inspected ARM initialization requires `/chosen/dram-base` and `/chosen/dram-size`, absent from the inspected Hanoip DTS source. The runtime firmware tree and XNU `boot_args` equivalent remain unknown. Hanoip's reserved-memory map and exact board overlay also need validation.
+
+### Stage B.4 — boot chain and Android image-format research
+
+See [MOTOROLA_BOOT_CHAIN_AND_IMAGE_FORMAT.md](../research/MOTOROLA_BOOT_CHAIN_AND_IMAGE_FORMAT.md).
+
+- Motorola's exact kernel source tag builds ARM64 Image outputs and includes Hanoip-specific DTB/DTBO overlay targets. This is kernel build evidence, not a description of the proprietary boot firmware.
+- A community Hanoip lineage-20 BoardConfig selects Android boot-image header v3 and describes a separated DTBO plus vendor-boot image configuration. This does not prove the stock Android 12 firmware uses the same layout.
+- AOSP permits Android 12 devices to use boot-image header v3 or v4. The stock XT2135-2 header version, partition layout, AVB chain, boot-stage sequence, and kernel entry contract remain unknown.
+- Android boot-image metadata does not supply or prove Apple's ARM64 boot_args contract. The XNU handoff gap identified in Stage B.3 remains open.
+
+**Exit:** Stage B.4 source research is documented; stock boot-chain and runtime handoff evidence remain incomplete. No device-side changes or boot attempts have been made.
