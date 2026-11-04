@@ -186,3 +186,17 @@ The inspected XNU xnu-8796.121.2 assembly documents x0 to start_first_cpu as the
 The exact Motorola Hanoip DTS declares PSCI CPU enable-methods and a PSCI node using the SMC conduit. The inspected XNU cpu_start path delegates secondary CPU startup to PE_cpu_start. A Hanoip-specific implementation of that hook or verified access to the platform PSCI service from XNU has not been established.
 
 **Status:** The Linux and XNU entry interfaces differ at the source level. Motorola's actual runtime register/exception state, XNU boot_args availability, DRAM properties, and XNU PSCI integration remain unknown. Stage B.5 is documented; no boot compatibility is claimed.
+
+## 11. Stage B.6 — XNU platform dependencies
+
+See [XNU_PLATFORM_DEPENDENCIES.md](XNU_PLATFORM_DEPENDENCIES.md).
+
+The inspected XNU source has generic SecureDT parsing routines, but platform-specific code expects particular paths and properties. Examples include `/arm-io/gic`, an `arm-io` node with `ranges`, and CPU/timebase properties under `/cpus`. Hanoip's public Linux DTS describes its GICv3 at `interrupt-controller@17a00000` and a Qualcomm PDC at `0x0b220000`.
+
+Hanoip's CPU nodes declare PSCI with an SMC conduit. XNU's generic ARM64 `cpu_start()` calls the platform hook `PE_cpu_start()`; a Hanoip implementation was not found in the inspected XNU source.
+
+Hanoip's architected timer uses four PPI declarations and a 19.2 MHz `clock-frequency`. XNU's machine-identification code instead looks for `timebase-frequency` on a CPU node marked `state = "running"`, and initializes a 24 MHz default. The inspected static Hanoip CPU nodes do not show those properties.
+
+XNU's GICv3 FIQ implementation is conditional on `HAS_GIC_V3`, looks up `/arm-io/gic`, and enables PPI 27. A matching Hanoip device-tree path, timer PPI mapping, and Qualcomm PDC integration have not been established.
+
+**Status:** Stage B.6 is documented. Device-tree conventions, CPU power-on integration, timer/timebase setup, interrupt-controller discovery, and PDC support remain open platform-porting tasks. No boot compatibility is claimed.
