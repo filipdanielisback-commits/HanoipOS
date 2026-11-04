@@ -150,3 +150,8 @@ No XNU build or device boot has been attempted.
 - Hanoip kernel config extension: https://github.com/MotorolaMobilityLLC/kernel-msm/blob/MMI-S2RIS32.32-20-9-9-2-3/arch/arm64/configs/vendor/ext_config/moto-sdmmagpie-hanoip.config
 - Community Hanoip BoardConfig: https://github.com/motorola-sm6150-devs/device_motorola_hanoip/blob/lineage-20/BoardConfig.mk
 - XNU candidate ARM initialization: https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.121.2/osfmk/arm/arm_init.c
+
+
+## Stage B.3 — boot environment and memory handoff
+
+See [BOOT_ENVIRONMENT_AND_MEMORY_HANDOFF.md](BOOT_ENVIRONMENT_AND_MEMORY_HANDOFF.md). Hanoip's published DTS has Linux `/chosen/bootargs` and extensive reserved-memory declarations, but no inspected source DTS entry for XNU's required `/chosen/dram-base` and `/chosen/dram-size`. XNU's ARM64 `boot_args` additionally carries kernel virtual/physical bases, managed memory size, and a flattened device-tree pointer/length. The runtime firmware handoff is not yet known. Board overlay selection for this exact handset also remains open.
