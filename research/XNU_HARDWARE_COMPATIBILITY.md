@@ -33,7 +33,7 @@ The GICv3 code is conditional on `HAS_GIC_V3`. The inspected `VMAPPLE.h` defines
 
 ### Compatibility assessment
 
-**<badge color="warning">Platform adaptation required</badge>** GICv3 is present on both sides at the architectural level, but the XNU path's expected device-tree path and platform assumptions do not match the Hanoip Linux DTS layout. The Qualcomm PDC is an additional controller whose wake/interrupt routing must be understood; no Hanoip-specific PDC implementation was identified in the XNU files searched.
+****Status: Platform adaptation required**** GICv3 is present on both sides at the architectural level, but the XNU path's expected device-tree path and platform assumptions do not match the Hanoip Linux DTS layout. The Qualcomm PDC is an additional controller whose wake/interrupt routing must be understood; no Hanoip-specific PDC implementation was identified in the XNU files searched.
 
 Required research before any implementation:
 - identify the correct XNU platform configuration and whether its GICv3 code can be selected without Apple-only assumptions;
@@ -57,7 +57,7 @@ In `pexpert/arm/pe_fiq.c`, the GIC setup enables PPI 27 for the timer/FIQ path. 
 
 ### Compatibility assessment
 
-**<badge color="warning">Timebase handoff mismatch to resolve</badge>** The 19.2 MHz `clock-frequency` property on Hanoip's timer node is not the same property that the inspected XNU timebase parser reads. If the runtime device tree does not add the CPU-node properties XNU expects, the inspected XNU code would retain its 24 MHz fallback. The actual runtime device tree supplied by firmware has not been inspected, so this remains a source-level warning rather than a confirmed runtime failure.
+****Status: Timebase handoff mismatch to resolve**** The 19.2 MHz `clock-frequency` property on Hanoip's timer node is not the same property that the inspected XNU timebase parser reads. If the runtime device tree does not add the CPU-node properties XNU expects, the inspected XNU code would retain its 24 MHz fallback. The actual runtime device tree supplied by firmware has not been inspected, so this remains a source-level warning rather than a confirmed runtime failure.
 
 Required research:
 - establish the actual counter frequency and whether it is stable across CPU power states;
@@ -85,7 +85,7 @@ No CPU-start code or firmware call should be inferred from the Linux `enable-met
 
 Hanoip's Linux DTS includes a Qualcomm PDC interrupt-controller node. The inspected XNU GIC code handles GIC distributor/redistributor programming and does not, by itself, establish Qualcomm PDC support.
 
-**<badge color="warning">Unverified / likely new platform work</badge>** Determine the PDC's role in wake interrupts, which sources are routed through it, and whether XNU needs PDC-specific handling or can rely on a simpler GIC-only configuration for an initial non-sleeping research target. Do not assume suspend/resume support.
+****Status: Unverified; likely new platform work**** Determine the PDC's role in wake interrupts, which sources are routed through it, and whether XNU needs PDC-specific handling or can rely on a simpler GIC-only configuration for an initial non-sleeping research target. Do not assume suspend/resume support.
 
 ## 5. Compatibility matrix
 
