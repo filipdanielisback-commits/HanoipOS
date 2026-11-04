@@ -51,3 +51,14 @@ This file records candidate references. A link is not an endorsement, proof of c
 ## Important
 
 Do not assume a device with the same SoC is interchangeable with the Moto G60. Board design, boot firmware, display, touch, power management, peripheral wiring, and vendor firmware can differ substantially. Do not commit proprietary Apple system images, signing keys, device secrets, or firmware without redistribution rights.
+
+
+### Stage B — Hanoip ARM64 platform requirements
+
+- **Date:** 2026-11-04
+- **Motorola source:** `MotorolaMobilityLLC/kernel-msm`, tag `MMI-S2RIS32.32-20-9-9-2-3`, peeled commit `f6673a1302e3b9ca84c54e956ad4075d676fdf59`.
+- **Files examined:** `sdmmagpie.dtsi`, `sdmmagpie-moto-base.dtsi`, `sdmmagpie-hanoi-base.dts`, Hanoip EVT1/DVT1/DVT2 overlays, `sdmsteppe-perf_defconfig`, `moto-sdmmagpie-hanoip.config`, and community Hanoip `BoardConfig.mk`.
+- **What it establishes:** Eight ARM64 CPU entries, PSCI CPU enable-method declarations, two CPU power-management groups (CPU0–5 and CPU6–7), GICv3 and Qualcomm PDC nodes, an ARMv8 architectural timer node, reserved-memory regions, and multiple Hanoip board-revision overlays.
+- **XNU comparison:** Candidate `xnu-8796.121.2` ARM initialization calls platform initialization, parses CPU topology, initializes the CPU timebase, and requires `dram-base` and `dram-size` properties under `/chosen`. This makes boot-argument and memory handoff a significant unresolved compatibility gap.
+- **What it does not establish:** It does not prove XNU supports this GIC/PDC, PSCI, timer, board revision, or boot protocol. It does not establish the complete runtime DRAM map or the exact board overlay used by the owner's phone.
+- **Follow-up:** Identify the exact installed Hanoip board overlay from reliable model/build-specific evidence, then inspect the XNU platform/interrupt/timer code paths and document which interfaces would require new platform code.
